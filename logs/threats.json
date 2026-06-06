@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1780745553112,
+    "timestamp": "2026-06-06T11:32:33.112Z",
+    "threat_level": "LOW",
+    "threat_type": "Local service exposure",
+    "recommendation": "Ensure the service on port 3000 is secured and intended for local use only."
+  },
+  {
+    "id": 1780745612489,
+    "timestamp": "2026-06-06T11:33:32.489Z",
+    "threat_level": "LOW",
+    "threat_type": "Potential unsecured service on open port",
+    "recommendation": "Ensure the service running on port 3000 is properly secured and only accessible from trusted sources."
+  }
+]

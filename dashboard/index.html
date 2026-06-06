@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CyberSentinel Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #0a0a0a;
+        color: #00ff41;
+        font-family: "Courier New", monospace;
+      }
+      header {
+        padding: 20px;
+        border-bottom: 1px solid #00ff41;
+        text-align: center;
+      }
+      header h1 {
+        font-size: 2rem;
+        text-shadow: 0 0 10px #00ff41;
+      }
+      header p {
+        color: #888;
+        margin-top: 5px;
+      }
+      .stats {
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        justify-content: center;
+      }
+      .stat-box {
+        background: #111;
+        border: 1px solid #00ff41;
+        padding: 20px 40px;
+        text-align: center;
+        border-radius: 8px;
+      }
+      .stat-box h2 {
+        font-size: 2rem;
+      }
+      .stat-box p {
+        color: #888;
+        font-size: 0.8rem;
+        margin-top: 5px;
+      }
+      .high {
+        color: #ff4444;
+      }
+      .medium {
+        color: #ffaa00;
+      }
+      .low {
+        color: #00ff41;
+      }
+      table {
+        width: 90%;
+        margin: 0 auto;
+        border-collapse: collapse;
+      }
+      th {
+        background: #111;
+        padding: 12px;
+        border: 1px solid #333;
+        color: #00ff41;
+      }
+      td {
+        padding: 12px;
+        border: 1px solid #222;
+        font-size: 0.85rem;
+      }
+      tr:hover {
+        background: #111;
+      }
+      .badge {
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 0.75rem;
+      }
+      .badge.HIGH {
+        background: #ff444422;
+        color: #ff4444;
+        border: 1px solid #ff4444;
+      }
+      .badge.MEDIUM {
+        background: #ffaa0022;
+        color: #ffaa00;
+        border: 1px solid #ffaa00;
+      }
+      .badge.LOW {
+        background: #00ff4122;
+        color: #00ff41;
+        border: 1px solid #00ff41;
+      }
+      h3 {
+        text-align: center;
+        padding: 20px;
+        color: #00ff41;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🛡️ CyberSentinel</h1>
+      <p>Autonomous Network Threat Detection Agent</p>
+    </header>
+
+    <div class="stats">
+      <div class="stat-box">
+        <h2 id="total">0</h2>
+        <p>Total Threats</p>
+      </div>
+      <div class="stat-box">
+        <h2 class="high" id="high">0</h2>
+        <p>High</p>
+      </div>
+      <div class="stat-box">
+        <h2 class="medium" id="medium">0</h2>
+        <p>Medium</p>
+      </div>
+      <div class="stat-box">
+        <h2 class="low" id="low">0</h2>
+        <p>Low</p>
+      </div>
+    </div>
+
+    <h3>📋 Threat Log</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Threat Level</th>
+          <th>Type</th>
+          <th>Recommendation</th>
+        </tr>
+      </thead>
+      <tbody id="threat-table"></tbody>
+    </table>
+
+    <script>
+      async function fetchThreats() {
+        const res = await fetch("/threats");
+        const threats = await res.json();
+
+        document.getElementById("total").textContent = threats.length;
+        document.getElementById("high").textContent = threats.filter(
+          (t) => t.threat_level === "HIGH",
+        ).length;
+        document.getElementById("medium").textContent = threats.filter(
+          (t) => t.threat_level === "MEDIUM",
+        ).length;
+        document.getElementById("low").textContent = threats.filter(
+          (t) => t.threat_level === "LOW",
+        ).length;
+
+        const tbody = document.getElementById("threat-table");
+        tbody.innerHTML = threats
+          .reverse()
+          .map(
+            (t) => `
+        <tr>
+          <td>${new Date(t.timestamp).toLocaleString()}</td>
+          <td><span class="badge ${t.threat_level}">${t.threat_level}</span></td>
+          <td>${t.threat_type}</td>
+          <td>${t.recommendation}</td>
+        </tr>
+      `,
+          )
+          .join("");
+      }
+
+      fetchThreats();
+      setInterval(fetchThreats, 10000);
+    </script>
+  </body>
+</html>
